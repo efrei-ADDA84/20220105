@@ -11,7 +11,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2.1.0
         with:
-          super_secret: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           super_secret: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.1.0
