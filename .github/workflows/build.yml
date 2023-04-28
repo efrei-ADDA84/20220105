@@ -16,6 +16,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.1.0
         with:
-          context: .
+          context: ./TP2
           push: true
           tags: mharmantepe/tp2:1.0.0
