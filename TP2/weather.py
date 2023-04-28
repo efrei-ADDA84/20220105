@@ -7,20 +7,13 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 #bhjbhjhjs
-@app.route('/')
+@app.route('/weather')
 def wrapper():
     print("toto")
     lat= request.args.get("LAT")
     lon = request.args.get("LONG")
     apikey = os.getenv("API_KEY") #we give this parameter when calling the command so no need for request.args.get
     """
-    #If the user doesn't enter all the parameters required
-    if lat == None or lon == None or apikey == "":
-        #Exit with an error message
-        #print("You didn't enter all the parameters required!!")
-        #exit(1)
-        lat= 30.000
-        lon = 29.45
         apikey = "9e518e1b1b5a0288918557d8a16255bb"
     """
     #The url of the API from where we acquire the data
