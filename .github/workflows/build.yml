@@ -18,4 +18,4 @@ jobs:
         with:
           context: ./TP2
           push: true
-          tags: mharmantepe/tp2:1.0.0
+          tags: mharmantepe/mywrapper:3.0.0
