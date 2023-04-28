@@ -9,6 +9,7 @@ app = Flask(__name__)
 #bhjbhjhjs
 @app.route('/')
 def wrapper():
+    print("toto")
     lat= request.args.get("LAT")
     lon = request.args.get("LONG")
     apikey = os.getenv("API_KEY") #we give this parameter when calling the command so no need for request.args.get
@@ -36,7 +37,7 @@ def wrapper():
 
 if __name__ == "__main__":
     #Run the Flask application 
-    app.run(debug =True, host='localhost', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=8081)
     
 
 
