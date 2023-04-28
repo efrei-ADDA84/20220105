@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 #Initialize Flask by creating an application instance
 app = Flask(__name__)
 
-#bhjbhjhjs
+#test change for the github actions
 @app.route('/weather')
 def wrapper():
     print("toto")
