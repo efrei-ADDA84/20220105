@@ -23,6 +23,6 @@ jobs:
           push: true
           tags: mharmantepe/tp2:1.0.0
       - name: Check Lint errors with Hadolint
-        uses: hadolint/hadolint-action@v3
+        uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
