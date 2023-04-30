@@ -21,4 +21,4 @@ jobs:
           context: ./TP2
           file: ./TP2/Dockerfile
           push: true
-          tags: mharmantepe/mywrapper:3.0.0
+          tags: mharmantepe/tp2:1.0.0

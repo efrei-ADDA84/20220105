@@ -6,15 +6,14 @@ from flask import Flask, jsonify, request
 #Initialize Flask by creating an application instance
 app = Flask(__name__)
 
-#test change for the github actions
+#Define /weather as the endpoint of the URL path for the route
 @app.route('/weather')
 def wrapper():
-    print("toto")
     lat= request.args.get("LAT")
     lon = request.args.get("LONG")
     apikey = os.getenv("API_KEY") #we give this parameter when calling the command so no need for request.args.get
     """
-        apikey = "9e518e1b1b5a0288918557d8a16255bb"
+        apikey = "44bb37ac5b6c0dbac2b353484a53499d"
     """
     #The url of the API from where we acquire the data
     url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={apikey}"
