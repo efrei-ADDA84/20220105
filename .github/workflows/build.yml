@@ -19,7 +19,7 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           context: ./TP2
-          dockerfile: ./TP2/Dockerfile
+          file: ./TP2/Dockerfile
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.1.0
         with:
