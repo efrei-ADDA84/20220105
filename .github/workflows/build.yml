@@ -25,4 +25,5 @@ jobs:
       - name: Check Lint errors with Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Dockerfile
+          context: ./TP2
+          dockerfile: ./TP2/Dockerfile
