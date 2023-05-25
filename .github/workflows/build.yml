@@ -36,6 +36,8 @@ jobs:
           login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
+#I had to change the "docker build . -t..." by "docker build TP3 -t...""
+#sampleapp must also be changed by my repository name on github which is my student number
       - run: |
           docker build TP3 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
@@ -50,7 +52,7 @@ jobs:
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: 20220105
-          location: 'west us'
+          
 
       
     #  - name: Build and push Docker image
