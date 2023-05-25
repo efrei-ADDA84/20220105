@@ -54,6 +54,10 @@ jobs:
           name: 20220105
           location: 'france south'
           port: 8081
+          secure-environment-variables : API_KEY=${{ secrets.API_KEY }}
+
+
+
 #use the port that you chose in the dockerfile!!
       
     #  - name: Build and push Docker image
