@@ -53,7 +53,7 @@ jobs:
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: 20220105
           location: 'france south'
-          port: 8081
+          
 #use the port that you chose in the dockerfile!!
       
     #  - name: Build and push Docker image
