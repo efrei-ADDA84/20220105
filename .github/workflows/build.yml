@@ -37,8 +37,8 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/melisimage:v1
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/melisimage:v1
+          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}:mharmantepe/tp3:v1
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}:mharmantepe/tp3:v1
 
       - name: 'Deploy to Azure Container Instances'
         uses: 'azure/aci-deploy@v1'
