@@ -52,8 +52,8 @@ jobs:
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: 20220105
-          location: france south
-          ports: 8081:8081
+          location: france central
+          ports: 8081
           #use the port that you chose in the dockerfile!!
           secure-environment-variables : API_KEY=${{ secrets.API_KEY }}
 
