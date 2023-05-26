@@ -39,7 +39,7 @@ jobs:
 #I had to change the "docker build . -t..." by "docker build TP3 -t...""
 #sampleapp must also be changed by my repository name on github which is my student number
       - run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }} TP3
+          docker build TP3 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
 
       - name: 'Deploy to Azure Container Instances'
