@@ -39,15 +39,15 @@ jobs:
 #I had to change the "docker build . -t..." by "docker build TP3 -t...""
 #sampleapp must also be changed by my repository name on github which is my student number
       - run: |
-          docker build TP3 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
+          docker build TP3 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:v1
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:v1
 
       - name: 'Deploy to Azure Container Instances'
         uses: 'azure/aci-deploy@v1'
         with:
           resource-group: ${{ secrets.RESOURCE_GROUP }}
           dns-name-label: devops-20220105
-          image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:${{ github.sha }}
+          image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/20220105:v1
           registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
