@@ -54,11 +54,9 @@ jobs:
           name: 20220105
           location: francesouth
           ports: "8080"
-          secure-environment-variables : API_KEY=${{ secrets.API_KEY }}
+          #use the port that you chose in the dockerfile!!
 
 
-
-#use the port that you chose in the dockerfile!!
       
     #  - name: Build and push Docker image
     #    uses: docker/build-push-action@v2.1.0
