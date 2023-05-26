@@ -16,7 +16,7 @@ ENV LONG=""
 ENV API_KEY=""
 
 #Port number
-EXPOSE 8080
+EXPOSE 8081
 
 #Execute the script weather.py with python
 CMD [ "python", "weather.py" ]
