@@ -18,7 +18,7 @@ variable "location" {
 
 variable "vm_name" {
   description = "Azure Virtual Machine Name"
-  default = "devops-20220105"
+  default     = "devops-20220105"
 }
 
 variable "vm_size" {
@@ -28,12 +28,12 @@ variable "vm_size" {
 
 variable "network_name" {
   description = "Network"
-  default = "network-tp4"
+  default     = "network-tp4"
 }
 
 variable "azurerm_subnet" {
   description = "Subnet"
-  default = "internal"
+  default     = "internal"
 }
 
 variable "user_admin" {
@@ -125,7 +125,7 @@ resource "azurerm_network_interface" "example" {
   location            = var.location
   resource_group_name = var.resource_group_name
   ip_configuration {
-    name                          = "internal-ip-config-melis"
+    name = "internal-ip-config-melis"
     #To get the subnet id we need to refer to the data block for subnet
     subnet_id                     = data.azurerm_subnet.tp4.id
     private_ip_address_allocation = "Dynamic"
