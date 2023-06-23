@@ -1,3 +1,0 @@
-#cloud-config
-ssh_authorized_keys:
-  - <votre_clé_publique_ssh>

@@ -6,13 +6,9 @@ provider "azurerm" {
   subscription_id = "765266c6-9a23-4638-af32-dd1e32613047"
 }
 
-# Définissez les variables
-variable "azure_subscription_id" {
-  description = "Azure Subscription ID"
-}
-
 variable "resource_group_name" {
-  description = "ADDA84-CTP"
+  description = "resource group name"
+  default     = "ADDA84-CTP"
 }
 
 variable "location" {
@@ -21,7 +17,7 @@ variable "location" {
 }
 
 variable "vm_name" {
-  description = "devops-20220105"
+  default = "devops-20220105"
 }
 
 variable "vm_size" {
@@ -29,41 +25,71 @@ variable "vm_size" {
   default     = "Standard_DS2_v2"
 }
 
-# Créez le groupe de ressources
-resource "azurerm_resource_group" "example" {
-  name     = var.resource_group_name
-  location = var.location
-}
-
-# Créez le réseau virtuel
-resource "azurerm_virtual_network" "example" {
-  name                = "network-tp4"
-  address_space       = ["10.0.0.0/16"]
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
+variable "network_name" {
+  default = "network-tp4"
 }
 
 # Créez le sous-réseau
-resource "azurerm_subnet" "example" {
-  name                 = "internal"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.0.0/24"]
+variable "azurerm_subnet" {
+  default = "internal"
 }
+
+variable "user" {
+  description = "user administrateur virtual machine"
+  default     = "devops"
+}
+/*
 resource "azurerm_storage_account" "example" {
   name                     = "mystorageaccount123"  
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
+*/
+
+resource "tls_private_key" "ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "public_key" {
+  content  = tls_private_key.ssh.public_key_openssh
+  filename = "ssh_public_key.pub"
+}
+
+output "private_key" {
+  value     = tls_private_key.ssh.private_key_pem
+  sensitive = true
+}
+
+data "azurerm_subnet" "tp4" {
+  name                 = "internal"
+  virtual_network_name = var.network_name
+  resource_group_name  = var.resource_group_name
+}
+
+# Add the command to generate id_rsa private key file
+resource "null_resource" "generate_private_key" {
+  provisioner "local-exec" {
+    #Extract the private key from the ssh key that I just generated, and write it in 
+    #the file called "id_rsa"
+    command = "echo '${tls_private_key.ssh.private_key_pem}' > id_rsa"
+  }
+}
+
 # Créez la machine virtuelle
 resource "azurerm_virtual_machine" "example" {
   name                  = "devops-20220105"
-  resource_group_name   = azurerm_resource_group.example.name
-  location              = azurerm_resource_group.example.location
+  resource_group_name   = var.resource_group_name
+  location              = var.location
   vm_size               = "Standard_D2s_v3"
   network_interface_ids = [azurerm_network_interface.example.id]
+
+  os_profile {
+    computer_name  = "devops-20220105"
+    admin_username = var.user
+  }
 
   storage_image_reference {
     publisher = "Canonical"
@@ -73,42 +99,38 @@ resource "azurerm_virtual_machine" "example" {
   }
 
   storage_os_disk {
-    name              = "osdisk"
+    name              = "osdisk-melis"
     create_option     = "FromImage"
     caching           = "ReadWrite"
     managed_disk_type = "Standard_LRS"
-    
+
   }
 
-  os_profile {
-    computer_name  = "devops-20220105"
-    admin_username = "devops"
-    admin_password = "12345"  # Set your own admin password here
-  }
-
-  boot_diagnostics {
-    enabled     = true
-    storage_uri = azurerm_storage_account.example.primary_blob_endpoint
+  os_profile_linux_config {
+    disable_password_authentication = true
+    ssh_keys {
+      path     = "/home/${var.user}/.ssh/authorized_keys"
+      key_data = tls_private_key.ssh.public_key_openssh
+    }
   }
 }
 
-
-# Créez l'adresse IP publique
+# Créer l'adresse IP publique
 resource "azurerm_public_ip" "example" {
-  name                = "public-ip"
+  name                = "public-ip-melis"
   location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
+  resource_group_name = var.resource_group_name
   allocation_method   = "Static"
 }
 
-# Créez la carte réseau
+# Créer la carte réseau
 resource "azurerm_network_interface" "example" {
-  name                      = "nic"
-  location                  = var.location
-  resource_group_name       = azurerm_resource_group.example.name
+  name                = "nic-melis"
+  location            = var.location
+  resource_group_name = var.resource_group_name
   ip_configuration {
-    name                          = "internal-ip-config"
-    subnet_id                     = azurerm_subnet.example.id
+    name                          = "internal-ip-config-melis"
+    subnet_id                     = data.azurerm_subnet.tp4.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.example.id
   }
