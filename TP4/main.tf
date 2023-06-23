@@ -1,13 +1,13 @@
 # Fichier main.tf
 
-# Configurez le fournisseur Azure
+#Configure the azure provider by adding the subscription id
 provider "azurerm" {
   features {}
   subscription_id = "765266c6-9a23-4638-af32-dd1e32613047"
 }
 
 variable "resource_group_name" {
-  description = "resource group name"
+  description = "Azure Resource Group"
   default     = "ADDA84-CTP"
 }
 
@@ -17,6 +17,7 @@ variable "location" {
 }
 
 variable "vm_name" {
+  description = "Azure Virtual Machine Name"
   default = "devops-20220105"
 }
 
@@ -26,28 +27,21 @@ variable "vm_size" {
 }
 
 variable "network_name" {
+  description = "Network"
   default = "network-tp4"
 }
 
-# Créez le sous-réseau
 variable "azurerm_subnet" {
+  description = "Subnet"
   default = "internal"
 }
 
-variable "user" {
-  description = "user administrateur virtual machine"
+variable "user_admin" {
+  description = "User Administrateur Virtual Machine"
   default     = "devops"
 }
-/*
-resource "azurerm_storage_account" "example" {
-  name                     = "mystorageaccount123"  
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-*/
 
+#Generate an SSH private key
 resource "tls_private_key" "ssh" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -63,13 +57,15 @@ output "private_key" {
   sensitive = true
 }
 
+#We need to access to the previously created subnet with a data block because it is 
+#more secure to get all of the information about this component this way.
 data "azurerm_subnet" "tp4" {
   name                 = "internal"
   virtual_network_name = var.network_name
   resource_group_name  = var.resource_group_name
 }
 
-# Add the command to generate id_rsa private key file
+#Generate id_rsa private key file
 resource "null_resource" "generate_private_key" {
   provisioner "local-exec" {
     #Extract the private key from the ssh key that I just generated, and write it in 
@@ -78,7 +74,7 @@ resource "null_resource" "generate_private_key" {
   }
 }
 
-# Créez la machine virtuelle
+#Create a virtual machine
 resource "azurerm_virtual_machine" "example" {
   name                  = "devops-20220105"
   resource_group_name   = var.resource_group_name
@@ -88,7 +84,7 @@ resource "azurerm_virtual_machine" "example" {
 
   os_profile {
     computer_name  = "devops-20220105"
-    admin_username = var.user
+    admin_username = var.user_admin
   }
 
   storage_image_reference {
@@ -99,7 +95,7 @@ resource "azurerm_virtual_machine" "example" {
   }
 
   storage_os_disk {
-    name              = "osdisk-melis"
+    name              = "osdisk-meliss"
     create_option     = "FromImage"
     caching           = "ReadWrite"
     managed_disk_type = "Standard_LRS"
@@ -109,13 +105,13 @@ resource "azurerm_virtual_machine" "example" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      path     = "/home/${var.user}/.ssh/authorized_keys"
+      path     = "/home/${var.user_admin}/.ssh/authorized_keys"
       key_data = tls_private_key.ssh.public_key_openssh
     }
   }
 }
 
-# Créer l'adresse IP publique
+#Create public ip adress
 resource "azurerm_public_ip" "example" {
   name                = "public-ip-melis"
   location            = var.location
@@ -123,13 +119,14 @@ resource "azurerm_public_ip" "example" {
   allocation_method   = "Static"
 }
 
-# Créer la carte réseau
+#Create network interface
 resource "azurerm_network_interface" "example" {
   name                = "nic-melis"
   location            = var.location
   resource_group_name = var.resource_group_name
   ip_configuration {
     name                          = "internal-ip-config-melis"
+    #To get the subnet id we need to refer to the data block for subnet
     subnet_id                     = data.azurerm_subnet.tp4.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.example.id
